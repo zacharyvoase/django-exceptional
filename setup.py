@@ -28,6 +28,6 @@ setup(
     author_email     = "z@zacharyvoase.com",
     url              = 'http://github.com/zacharyvoase/django-exceptional',
     description      = "A Django client for Exceptional (getexceptional.com).",
-    packages         = ['djexceptional'],
+    packages         = ['djexceptional', 'djexceptional.tests'],
     package_dir      = {'': 'src'},
 )
