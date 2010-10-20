@@ -10,7 +10,7 @@ class ResilientJSONEncoder(DjangoJSONEncoder):
     def default(self, o):
         try:
             return super(ResilientJSONEncoder, self).default(o)
-        except:
+        except Exception:
             return repr(o)
 
 
