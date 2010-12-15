@@ -54,8 +54,6 @@ class ExceptionalMiddleware(object):
         conn = urllib2.urlopen(self.api_endpoint, data=payload)
         try:
             conn.read()
-        except Exception, exc2:
-            import pdb; pdb.set_trace()
         finally:
             conn.close()
 
