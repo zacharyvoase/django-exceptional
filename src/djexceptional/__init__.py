@@ -160,6 +160,7 @@ class ExceptionalMiddleware(object):
             return settings_file[:-1]
         return settings_file
 
+    @staticmethod
     def filter_params(params):
         """Filter sensitive information out of parameter dictionaries."""
 
