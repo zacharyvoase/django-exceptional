@@ -1,17 +1,33 @@
+import datetime
+import decimal
 import re
 
-from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import datetime_safe
 from django.utils import simplejson
 
 
-class ResilientJSONEncoder(DjangoJSONEncoder):
-    """A JSON encoder that should never fail."""
+class ResilientJSONEncoder(simplejson.JSONEncoder):
+    """A JSON encoder (with support for dates/times) that should never fail."""
+
+    DATE_FORMAT = "%Y-%m-%d"
+    TIME_FORMAT = "%H:%M:%S"
 
     def default(self, o):
-        try:
-            return super(ResilientJSONEncoder, self).default(o)
-        except Exception:
-            return repr(o)
+        if isinstance(o, datetime.datetime):
+            d = datetime_safe.new_datetime(o)
+            return d.strftime("%s %s" % (self.DATE_FORMAT, self.TIME_FORMAT))
+        elif isinstance(o, datetime.date):
+            d = datetime_safe.new_date(o)
+            return d.strftime(self.DATE_FORMAT)
+        elif isinstance(o, datetime.time):
+            return o.strftime(self.TIME_FORMAT)
+        elif isinstance(o, decimal.Decimal):
+            return str(o)
+        else:
+            try:
+                return super(ResilientJSONEncoder, self).default(o)
+            except Exception:
+                return repr(o)
 
 
 def json_dumps(obj):
