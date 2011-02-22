@@ -1,5 +1,7 @@
+from cStringIO import StringIO
 import datetime
 import exceptions
+import gzip
 import os
 import sys
 import traceback
@@ -56,6 +58,22 @@ class ExceptionalMiddleware(object):
             conn.read()
         finally:
             conn.close()
+
+    @staticmethod
+    def compress(bytes):
+        """Compress a bytestring using gzip."""
+
+        stream = StringIO()
+        # Use `compresslevel=1`; it's the least compressive but it's fast.
+        gzstream = gzip.GzipFile(fileobj=stream, compresslevel=1, mode='wb')
+        try:
+            try:
+                gzstream.write(bytes)
+            finally:
+                gzstream.close()
+            return stream.getvalue()
+        finally:
+            stream.close()
 
     @memoize
     def environment_info(self):
