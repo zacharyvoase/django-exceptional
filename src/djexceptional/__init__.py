@@ -1,13 +1,11 @@
 from cStringIO import StringIO
 import datetime
-import exceptions
 import gzip
 import os
 import sys
 import traceback
 import urllib
 import urllib2
-import zlib
 
 from django.conf import settings
 from django.core.exceptions import MiddlewareNotUsed, ImproperlyConfigured
@@ -18,7 +16,7 @@ from djexceptional.utils import memoize, json_dumps, meta_to_http
 
 __version__ = '0.0.3'
 
-EXCEPTIONAL_PROTOCOL_VERSION = 5
+EXCEPTIONAL_PROTOCOL_VERSION = 6
 EXCEPTIONAL_API_ENDPOINT = "http://api.getexceptional.com/api/errors"
 
 
@@ -51,9 +49,12 @@ class ExceptionalMiddleware(object):
         info.update(self.request_info(request))
         info.update(self.exception_info(exc, sys.exc_info()[2]))
 
-        payload = zlib.compress(json_dumps(info), zlib.Z_BEST_SPEED)
+        payload = self.compress(json_dumps(info))
+        req = urllib2.Request(self.api_endpoint, data=payload)
+        req.headers['Content-Encoding'] = 'gzip'
+        req.headers['Content-Type'] = 'application/json'
 
-        conn = urllib2.urlopen(self.api_endpoint, data=payload)
+        conn = urllib2.urlopen(req)
         try:
             conn.read()
         finally:
