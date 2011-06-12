@@ -1,6 +1,8 @@
 from cStringIO import StringIO
+
 import datetime
 import gzip
+import logging
 import os
 import sys
 import traceback
@@ -54,11 +56,14 @@ class ExceptionalMiddleware(object):
         req.headers['Content-Encoding'] = 'gzip'
         req.headers['Content-Type'] = 'application/json'
 
-        conn = urllib2.urlopen(req)
         try:
-            conn.read()
-        finally:
-            conn.close()
+            conn = urllib2.urlopen(req)
+            try:
+                conn.read()
+            finally:
+                conn.close()
+        except:
+            logging.exception("Exception occurred while communicating with GetExceptional")
 
     @staticmethod
     def compress(bytes):
