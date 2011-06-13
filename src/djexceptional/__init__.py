@@ -62,7 +62,7 @@ class ExceptionalMiddleware(object):
                 conn.read()
             finally:
                 conn.close()
-        except:
+        except Exception:
             logging.exception("Exception occurred while communicating with GetExceptional")
 
     @staticmethod
