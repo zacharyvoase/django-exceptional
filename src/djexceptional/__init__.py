@@ -16,7 +16,7 @@ from django.core.urlresolvers import resolve
 from djexceptional.utils import memoize, json_dumps, meta_to_http
 
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 EXCEPTIONAL_PROTOCOL_VERSION = 6
 EXCEPTIONAL_API_ENDPOINT = "http://api.getexceptional.com/api/errors"
