@@ -21,6 +21,8 @@ __version__ = '0.1.0'
 EXCEPTIONAL_PROTOCOL_VERSION = 6
 EXCEPTIONAL_API_ENDPOINT = "http://api.getexceptional.com/api/errors"
 
+LOG = logging.getLogger('djexceptional')
+
 
 class ExceptionalMiddleware(object):
 
@@ -62,8 +64,8 @@ class ExceptionalMiddleware(object):
                 conn.read()
             finally:
                 conn.close()
-        except Exception:
-            logging.exception("Exception occurred while communicating with GetExceptional")
+        except Exception, exc:
+            LOG.exception("Error communicating with the Exceptional service: %r", exc)
 
     @staticmethod
     def compress(bytes):
