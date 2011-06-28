@@ -151,7 +151,8 @@ class ExceptionalMiddleware(object):
 
         return {
                 "exception": {
-                    "occurred_at": timestamp.isoformat(),
+                    # Naively assume all times are in UTC.
+                    "occurred_at": timestamp.isoformat() + 'Z',
                     "message": str(exception),
                     "backtrace": backtrace,
                     "exception_class": self.exception_class(exception)
