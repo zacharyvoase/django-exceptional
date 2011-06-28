@@ -19,7 +19,8 @@ from djexceptional.utils import memoize, json_dumps, meta_to_http
 __version__ = '0.1.2'
 
 EXCEPTIONAL_PROTOCOL_VERSION = 6
-EXCEPTIONAL_API_ENDPOINT = "http://api.getexceptional.com/api/errors"
+EXCEPTIONAL_API_ENDPOINT = getattr(settings, 'EXCEPTIONAL_API_ENDPOINT',
+                                   "http://api.getexceptional.com/api/errors")
 
 LOG = logging.getLogger('djexceptional')
 
@@ -30,7 +31,9 @@ class ExceptionalMiddleware(object):
     Middleware to interface with the Exceptional service.
 
     Requires very little intervention on behalf of the user; you just need to
-    add `EXCEPTIONAL_API_KEY` to your Django settings.
+    add `EXCEPTIONAL_API_KEY` to your Django settings. You can also optionally
+    set `EXCEPTIONAL_API_ENDPOINT` to change the API endpoint which will be
+    used; the default is `'http://api.getexceptional.com/api/errors'`.
     """
 
     def __init__(self):
