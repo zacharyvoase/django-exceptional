@@ -12,6 +12,14 @@ def just_raise(request):
         g()
     return f()
 
+class ClassBasedView(object):
+
+    def method(self, request):
+        raise TypeError("Something happened inside a method.")
+
+    def __call__(self, request):
+        raise TypeError("Something happened inside a class.")
+
 
 urlpatterns = patterns('',
     # Example:
@@ -24,4 +32,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # (r'^admin/', include(admin.site.urls)),
     (r'^$', just_raise),
+    (r'^class/$', ClassBasedView()),
+    (r'^method/$', ClassBasedView().method),
 )
