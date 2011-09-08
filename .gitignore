@@ -4,6 +4,8 @@
 .DS_Store
 build
 dist
+distribute-*
 MANIFEST
 test/example/*.sqlite3
+test/example/.virtualenv
 test/example/exceptional.key
