@@ -2,6 +2,7 @@ from cStringIO import StringIO
 
 import datetime
 import gzip
+import inspect
 import logging
 import os
 import sys
@@ -126,6 +127,8 @@ class ExceptionalMiddleware(object):
         for i, arg in enumerate(args):
             kwargs[i] = arg
 
+        view_name = self.get_view_name(view)
+
         parameters = {}
         parameters.update(kwargs)
         parameters.update(request.POST.items())
@@ -136,8 +139,8 @@ class ExceptionalMiddleware(object):
                     "session": dict(request.session),
                     "remote_ip": request.META["REMOTE_ADDR"],
                     "parameters": parameters,
-                    "action": view.__name__,
-                    "controller": view.__module__,
+                    "controller": view_name[0],
+                    "action": view_name[1],
                     "url": request.build_absolute_uri(),
                     "request_method": request.method,
                     "headers": meta_to_http(request.META)
@@ -187,6 +190,20 @@ class ExceptionalMiddleware(object):
         if settings_file.endswith(".pyc"):
             return settings_file[:-1]
         return settings_file
+
+    @staticmethod
+    def get_view_name(view):
+        """Resolve a Django view object into a controller/action name pair."""
+
+        if inspect.isfunction(view):
+            # function_module, function_name
+            return view.__module__, view.__name__
+        elif inspect.ismethod(view):
+            # class_module.ClassName, method_name
+            return (view.im_class.__module__ + '.' + view.im_class.__name__,
+                    view.__name__)
+        # class_module, ClassName
+        return view.__class__.__module__, view.__class__.__name__
 
     @staticmethod
     def filter_params(params):
